@@ -42,7 +42,7 @@ vim.keymap.set('t', '<C-Space>', [[<C-\><C-n>]], { noremap = true })
 vim.keymap.set("n", "<leader>o", ":Open %<CR>", { noremap = true })
 
 vim.pack.add({
-  { src = "https://github.com/stevearc/oil.nvim" },
+  -- { src = "https://github.com/stevearc/oil.nvim" },
   { src = "https://github.com/echasnovski/mini.pick" },
   { src = "https://github.com/nvim-treesitter/nvim-treesitter" },
   { src = "https://github.com/neovim/nvim-lspconfig" },
@@ -99,7 +99,7 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.cmd("set completeopt+=noselect")
 
 require "mini.pick".setup()
-require "oil".setup()
+-- require "oil".setup()
 -- require "stay-centered".setup()
 require "nvim-autopairs".setup()
 require "nvim-treesitter.configs".setup({
@@ -131,7 +131,9 @@ vim.keymap.set('n', 'gl', vim.diagnostic.open_float, { desc = "Show diagnostics 
 
 vim.keymap.set("n", "<leader>ts", function()
   if vim.o.laststatus == 0 then
-    vim.o.laststatus = 3
+    vim.o.laststatus = 1
+    vim.o.showtabline = 1
+    vim.o.cmdheight = 1
   else
     vim.o.laststatus = 0
     vim.o.showtabline = 0
@@ -260,7 +262,7 @@ if vim.g.neovide then
   -- vim.o.guifont = "Iosevka SS05"
   vim.o.guifont = "Cascadia Code"
   -- vim.o.guifont = "ComicShannsMono Nerd Font"
-  vim.g.neovide_scale_factor = 2.0
+  vim.g.neovide_scale_factor = 3.0
 
   vim.g.neovide_cursor_trail_size = 2.0
   vim.g.neovide_cursor_antialiasing = true
