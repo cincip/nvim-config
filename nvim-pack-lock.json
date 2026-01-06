@@ -1,8 +1,53 @@
 {
   "plugins": {
+    "ansi-nvim": [],
+    "gruber-darker.nvim": {
+      "rev": "98a2e14",
+      "src": "https://github.com/blazkowolf/gruber-darker.nvim"
+    },
+    "jellybeans.nvim": {
+      "rev": "28b8088",
+      "src": "https://github.com/WTFox/jellybeans.nvim"
+    },
+    "kanagawa-paper.nvim": {
+      "rev": "075c35e",
+      "src": "https://github.com/thesimonho/kanagawa-paper.nvim"
+    },
+    "kanagawa.nvim": {
+      "rev": "aef7f5c",
+      "src": "https://github.com/rebelot/kanagawa.nvim"
+    },
+    "mellifluous.nvim": {
+      "rev": "4ce6258",
+      "src": "https://github.com/ramojus/mellifluous.nvim"
+    },
+    "mine-pine": {
+      "rev": "df32fe2",
+      "src": "https://github.com/thembones79/mine-pine"
+    },
+    "mini.ai": {
+      "rev": "bfb26d9",
+      "src": "https://github.com/nvim-mini/mini.ai"
+    },
     "mini.pick": {
       "rev": "96ee37d",
       "src": "https://github.com/echasnovski/mini.pick"
+    },
+    "monokai.nvim": {
+      "rev": "b8bd44d",
+      "src": "https://github.com/tanvirtin/monokai.nvim"
+    },
+    "multiple-cursors.nvim": {
+      "rev": "8d410c0",
+      "src": "https://github.com/brenton-leighton/multiple-cursors.nvim"
+    },
+    "neovim": {
+      "rev": "cf2a288",
+      "src": "https://github.com/rose-pine/neovim"
+    },
+    "neovim-ayu": {
+      "rev": "38caa8b",
+      "src": "https://github.com/Shatur/neovim-ayu"
     },
     "nvim-autopairs": {
       "rev": "7a2c97c",

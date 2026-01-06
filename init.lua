@@ -1,8 +1,8 @@
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.wrap = false
-vim.o.tabstop = 2
-vim.opt.shiftwidth = 2
+vim.o.tabstop = 4
+vim.opt.shiftwidth = 4
 vim.o.signcolumn = "yes"
 vim.opt.expandtab = true
 vim.o.swapfile = false
@@ -13,7 +13,14 @@ vim.opt.background = "dark"
 -- vim.opt.background = "light"
 vim.opt.termguicolors = true
 -- vim.opt.guicursor = "i-c:block-Cursor"
--- vim.opt.iskeyword:remove("_")
+vim.opt.iskeyword:remove("_")
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+
+vim.opt.langmap = table.concat({
+  "фa,иb,сc,вd,уe,аf,пg,рh,шi,оj,лk,дl,ьm,тn,щo,зp,йq,кr,ыs,еt,гu,мv,цw,чx,нy,яz",
+  "ФA,ИB,СC,ВD,УE,АF,ПG,РH,ШI,ОJ,ЛK,ДL,ЬM,ТN,ЩO,ЗP,ЙQ,КR,ЫS,ЕT,ГU,МV,ЦW,ЧX,НY,ЯZ"
+}, ",")
 
 vim.keymap.set({ 'n', 'v', 'x' }, '<leader>y', '"+y<CR>')
 vim.keymap.set({ 'n', 'v', 'x' }, '<leader>yy', '"+yy<CR>')
@@ -25,9 +32,13 @@ vim.keymap.set({ 'n', 'v', 'x' }, '<M-L>', 'zL')
 vim.keymap.set({ 'n', 'v', 'x' }, '<M-H>', 'zH')
 vim.keymap.set({ 'n', 'v', 'x' }, '<M-j>', '<C-e>')
 vim.keymap.set({ 'n', 'v', 'x' }, '<M-k>', '<C-y>')
-vim.keymap.set("i", "<C-a>", "<Left>", { noremap = true })
-vim.keymap.set("i", "<C-k>", "<Right>", { noremap = true })
+vim.keymap.set({ 'n', 'v', 'x' }, '<leader>x', ':e ~/buffer.md<CR>')
+vim.keymap.set({ 'n', 'v', 'x' }, '<leader>c', ':e ~/Notes/scratchpad.md<CR>')
+vim.keymap.set({ "i", "c" }, "<C-a>", "<Left>", { noremap = true })
+vim.keymap.set({ "i", "c" }, "<C-k>", "<Right>", { noremap = true })
 vim.keymap.set("i", "<C-S-v>", "<C-r>+", { noremap = true, silent = true })
+vim.keymap.set('n', '<leader><CR>', ":noh<CR>")
+vim.keymap.set('n', '<leader>q', "@q")
 vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format)
 
 for i = 1, 9 do
@@ -35,11 +46,17 @@ for i = 1, 9 do
 end
 vim.keymap.set("n", "<Leader>t-", ":-tabm<CR>", opts)
 vim.keymap.set("n", "<Leader>t=", ":+tabm<CR>", opts)
-vim.keymap.set("n", "<Leader>tn", ":tabe ", opts)
+vim.keymap.set("n", "<Leader>tn", ':tabedit <C-r>=escape(expand("%:p:h"), " ")<cr>/', opts)
+vim.keymap.set("n", "<Leader>t0", ":tabo ", opts)
 vim.keymap.set("n", "<Leader>tc", ":tabclose<CR>", opts)
 vim.keymap.set("n", "<Leader>te", ":tab terminal<CR>", opts)
 vim.keymap.set('t', '<C-Space>', [[<C-\><C-n>]], { noremap = true })
 vim.keymap.set("n", "<leader>o", ":Open %<CR>", { noremap = true })
+
+
+
+vim.keymap.set("n", "<leader>v", ":vsplit<CR>", { noremap = true })
+vim.keymap.set("n", "<M-w>", "<C-w><C-w>", { noremap = true })
 
 vim.pack.add({
   -- { src = "https://github.com/stevearc/oil.nvim" },
@@ -48,10 +65,17 @@ vim.pack.add({
   { src = "https://github.com/neovim/nvim-lspconfig" },
   -- { src = "https://github.com/arnamak/stay-centered.nvim" },
   { src = "https://github.com/windwp/nvim-autopairs" },
-  -- { src = "https://github.com/WTFox/jellybeans.nvim" },
-  -- { src = "https://github.com/stevedylandev/ansi-nvim" },
-  -- { src = "https://github.com/thembones79/mine-pine" },
-  -- { src = "https://github.com/ramojus/mellifluous.nvim" },
+  { src = "https://github.com/nvim-mini/mini.ai" },
+  { src = "https://github.com/brenton-leighton/multiple-cursors.nvim" },
+  { src = "https://github.com/WTFox/jellybeans.nvim" },
+  { src = "https://github.com/thembones79/mine-pine" },
+  { src = "https://github.com/rose-pine/neovim" },
+  { src = "https://github.com/ramojus/mellifluous.nvim" },
+  { src = "https://github.com/blazkowolf/gruber-darker.nvim" },
+  { src = "https://github.com/thesimonho/kanagawa-paper.nvim"},
+  { src = "https://github.com/rebelot/kanagawa.nvim"},
+  { src = "https://github.com/Shatur/neovim-ayu"},
+  { src = "https://github.com/tanvirtin/monokai.nvim"},
 })
 
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -80,8 +104,10 @@ vim.api.nvim_create_autocmd("FileType", {
     -- Remap movement keys to move by display lines, not logical lines
     local opts = { noremap = true, silent = true, buffer = true }
     vim.keymap.set({ 'n', 'v', 'x' }, "j", "gj", opts)
+    vim.keymap.set({ 'n', 'v', 'x' }, "о", "gj", opts)
     vim.keymap.set({ 'n', 'v', 'x' }, "<C-n>", "gj")
     vim.keymap.set({ 'n', 'v', 'x' }, "k", "gk", opts)
+    vim.keymap.set({ 'n', 'v', 'x' }, "л", "gk", opts)
     vim.keymap.set({ 'n', 'v', 'x' }, "<Down>", "gj", opts)
     vim.keymap.set({ 'n', 'v', 'x' }, "<Up>", "gk", opts)
   end,
@@ -96,9 +122,12 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+
 vim.cmd("set completeopt+=noselect")
 
 require "mini.pick".setup()
+require "mini.ai".setup()
+require "multiple-cursors".setup()
 -- require "oil".setup()
 -- require "stay-centered".setup()
 require "nvim-autopairs".setup()
@@ -111,8 +140,9 @@ vim.lsp.enable({ "lua_ls", "zls", "clangd", "typescript-language-server", "tailw
   "prisma-language-server", "kotlin-language-server", "marksman", "tinymist", "pyright", "asm-lsp" })
 -- vim.cmd("colorscheme jellybeans-mono")
 -- vim.cmd("colorscheme jellybeans-default")
--- vim.cmd("colorscheme ansi")
--- vim.cmd("colorscheme mine-pine")
+-- vim.cmd("colorscheme jellybeans")
+-- vim.cmd("colorscheme rose-pine")
+-- vim.cmd("colorscheme mine-pine-moon")
 -- vim.cmd("colorscheme mine-pine-prime")
 -- vim.cmd("colorscheme mellifluous")
 -- vim.cmd("colorscheme desert")
@@ -120,14 +150,46 @@ vim.cmd("colorscheme retrobox")
 -- vim.cmd("colorscheme habamax")
 -- vim.cmd("colorscheme peachpuff")
 -- vim.cmd("colorscheme slate")
+-- vim.cmd("colorscheme quiet")
+-- vim.cmd("colorscheme gruber-darker")
+-- vim.cmd("colorscheme kanagawa-paper")
+-- vim.cmd("colorscheme kanagawa")
+-- vim.cmd("colorscheme ayu")
+-- vim.cmd("colorscheme monokai")
+-- vim.cmd("colorscheme monokai_ristretto")
+
 vim.keymap.set("n", "<leader>ff", ':Pick files<CR>')
 vim.keymap.set("n", "<leader>fg", ':Pick grep_live<CR>')
 vim.keymap.set("n", "<leader>fb", ':Pick buffers<CR>')
 vim.keymap.set('n', '<leader>e', ":Explore<CR>")
+-- vim.keymap.set('n', '<leader>e', ":Oil<CR>")
 vim.keymap.set('n', 'gl', vim.diagnostic.open_float, { desc = "Show diagnostics (float)" })
 -- vim.keymap.set("n", "<leader>sc", function()
 --   require("stay-centered").toggle()
 -- end, { desc = "Toggle Stay Centered" })
+
+
+-- Remaps for multiple cursors
+-- Add cursor down
+vim.keymap.set({ "n", "x" }, "<C-j>", "<Cmd>MultipleCursorsAddDown<CR>", { desc = "Add a cursor then move down" })
+vim.keymap.set({ "n", "i", "x" }, "<C-Down>", "<Cmd>MultipleCursorsAddDown<CR>", { desc = "Add a cursor then move down" })
+-- Add cursor up
+vim.keymap.set({ "n", "x" }, "<C-k>", "<Cmd>MultipleCursorsAddUp<CR>", { desc = "Add a cursor then move up" })
+vim.keymap.set({ "n", "i", "x" }, "<C-Up>", "<Cmd>MultipleCursorsAddUp<CR>", { desc = "Add a cursor then move up" }) -- Mouse add / delete cursor
+vim.keymap.set({ "n", "i" }, "<C-LeftMouse>", "<Cmd>MultipleCursorsMouseAddDelete<CR>", { desc = "Add or remove a cursor" })
+-- Add cursors to all matches
+vim.keymap.set({ "n", "x" }, "<Leader>a", "<Cmd>MultipleCursorsAddMatches<CR>", { desc = "Add cursors to the word under the cursor" })
+vim.keymap.set({ "n", "x" }, "<C->>", "<Cmd>MultipleCursorsAddJumpNextMatch<CR>")
+vim.keymap.set({ "n", "x" }, "<C-<>", "<Cmd>MultipleCursorsAddJumpPrevMatch<CR>")
+vim.keymap.set({ "n", "x" }, "<leader>l", function() require("multiple-cursors").align() end)
+
+-- Make background transparent
+-- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "CursorLineNr", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "CursorLine", { bg = "none" })
 
 vim.keymap.set("n", "<leader>ts", function()
   if vim.o.laststatus == 0 then
@@ -141,7 +203,7 @@ vim.keymap.set("n", "<leader>ts", function()
   end
 end, { desc = "Toggle statusline" })
 
--- Set up a keymap to compile & run C/C++/Python/Lua/Typst/Zig in a new WezTerm pane/window
+
 vim.keymap.set("n", "<leader>r", function()
   local file     = vim.fn.expand("%:p")      -- absolute path to current file
   local ext      = vim.fn.expand("%:e")      -- file extension
@@ -232,9 +294,22 @@ vim.keymap.set("n", "<leader>r", function()
   elseif ext == "zig" then
     -- Zig support
     cmd = spawn_wezterm("zig run " .. shell_escape(file), "Zig: " .. filename)
+  elseif ext == "kt" then
+    -- Kotlin (.kt) support: compile to jar with runtime and run with java
+    local jar_path = dir .. "/" .. filename .. ".jar"
+    local compile_cmd = string.format(
+      "kotlinc %s -include-runtime -d %s",
+      shell_escape(file),
+      shell_escape(jar_path)
+    )
+    local run_cmd = string.format("java -jar %s", shell_escape(jar_path))
+    cmd = string.format("%s && %s", compile_cmd, spawn_wezterm(run_cmd, "Kotlin: " .. filename))
+  elseif ext == "kts" then
+    -- Kotlin script (.kts) support: run directly with kotlin
+    cmd = spawn_wezterm("kotlin " .. shell_escape(file), "Kotlin Script: " .. filename)
   else
     print("Unsupported file type: " .. ext)
-    print("Supported: c, cpp, py, lua, typ, rs, go, js, java, sh, bash, zig")
+    print("Supported: c, cpp, py, lua, typ, rs, go, js, java, sh, bash, zig, kt, kts")
     return
   end
   
@@ -259,10 +334,12 @@ desc = "Kill running processes (typst watch, zathura)",
 
 
 if vim.g.neovide then
-  -- vim.o.guifont = "Iosevka SS05"
-  vim.o.guifont = "Cascadia Code"
+  vim.o.guifont = "Iosevka Fixed"
+  -- vim.o.guifont = "Cascadia Code"
+  -- vim.o.guifont = "Fira Mono"
+  -- vim.o.guifont = "Input Mono"
   -- vim.o.guifont = "ComicShannsMono Nerd Font"
-  vim.g.neovide_scale_factor = 3.0
+  vim.g.neovide_scale_factor = 2.0
 
   vim.g.neovide_cursor_trail_size = 2.0
   vim.g.neovide_cursor_antialiasing = true
