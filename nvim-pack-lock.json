@@ -1,9 +1,21 @@
 {
   "plugins": {
     "ansi-nvim": [],
+    "copilot.vim": {
+      "rev": "a12fd56",
+      "src": "https://github.com/github/copilot.vim"
+    },
     "gruber-darker.nvim": {
       "rev": "98a2e14",
       "src": "https://github.com/blazkowolf/gruber-darker.nvim"
+    },
+    "hologram.nvim": {
+      "rev": "f5194f7",
+      "src": "https://github.com/edluffy/hologram.nvim"
+    },
+    "image.nvim": {
+      "rev": "446a8a5",
+      "src": "https://github.com/3rd/image.nvim"
     },
     "jellybeans.nvim": {
       "rev": "28b8088",
@@ -20,6 +32,10 @@
     "mellifluous.nvim": {
       "rev": "4ce6258",
       "src": "https://github.com/ramojus/mellifluous.nvim"
+    },
+    "miasma.nvim": {
+      "rev": "627f2e1",
+      "src": "https://github.com/xero/miasma.nvim"
     },
     "mine-pine": {
       "rev": "df32fe2",
@@ -64,6 +80,10 @@
     "oil.nvim": {
       "rev": "7194872",
       "src": "https://github.com/stevearc/oil.nvim"
+    },
+    "supermaven-nvim": {
+      "rev": "07d20fc",
+      "src": "https://github.com/supermaven-inc/supermaven-nvim"
     }
   }
 }

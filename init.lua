@@ -2,11 +2,12 @@ vim.o.number = true
 vim.o.relativenumber = true
 vim.o.wrap = false
 vim.o.tabstop = 4
-vim.opt.shiftwidth = 4
-vim.o.signcolumn = "yes"
+vim.o.shiftwidth = 4
+vim.opt.softtabstop = 0
 vim.opt.expandtab = true
+vim.o.signcolumn = "yes"
 vim.o.swapfile = false
-vim.opt.cursorline = true
+-- vim.opt.cursorline = true
 vim.g.mapleader = " "
 vim.o.winborder = "rounded"
 vim.opt.background = "dark"
@@ -34,8 +35,13 @@ vim.keymap.set({ 'n', 'v', 'x' }, '<M-j>', '<C-e>')
 vim.keymap.set({ 'n', 'v', 'x' }, '<M-k>', '<C-y>')
 vim.keymap.set({ 'n', 'v', 'x' }, '<leader>x', ':e ~/buffer.md<CR>')
 vim.keymap.set({ 'n', 'v', 'x' }, '<leader>c', ':e ~/Notes/scratchpad.md<CR>')
+vim.keymap.set({ 'n', 'v', 'x' }, '<C-c>at', ':e ~/org/todo.org<CR>')
 vim.keymap.set({ "i", "c" }, "<C-a>", "<Left>", { noremap = true })
 vim.keymap.set({ "i", "c" }, "<C-k>", "<Right>", { noremap = true })
+vim.keymap.set({ "i", "c" }, "<C-d>", "<delete>", { noremap = true })
+vim.keymap.set({ "i", "c" }, "<D-Space>", "", { noremap = true })
+vim.keymap.set("c", "<C-n>", "<Down>")
+vim.keymap.set("c", "<C-p>", "<Up>")
 vim.keymap.set("i", "<C-S-v>", "<C-r>+", { noremap = true, silent = true })
 vim.keymap.set('n', '<leader><CR>', ":noh<CR>")
 vim.keymap.set('n', '<leader>q', "@q")
@@ -54,8 +60,28 @@ vim.keymap.set('t', '<C-Space>', [[<C-\><C-n>]], { noremap = true })
 vim.keymap.set("n", "<leader>o", ":Open %<CR>", { noremap = true })
 
 
+vim.keymap.set("n", "<M-c>", function()
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  local line = vim.api.nvim_get_current_line()
+
+  -- find word boundaries
+  local s, e = line:find("[%w_]+", col + 1)
+  if not s then return end
+
+  local word = line:sub(s, e)
+  local cap = word:sub(1,1):upper() .. word:sub(2):lower()
+
+  vim.api.nvim_set_current_line(
+    line:sub(1, s - 1) .. cap .. line:sub(e + 1)
+  )
+
+  -- optional cursor placement
+  vim.api.nvim_win_set_cursor(0, { row, e })
+end, { noremap = true, desc = "Capitalize word (pure Lua)" })
+
 
 vim.keymap.set("n", "<leader>v", ":vsplit<CR>", { noremap = true })
+vim.keymap.set("n", "<leader>h", ":split<CR>", { noremap = true })
 vim.keymap.set("n", "<M-w>", "<C-w><C-w>", { noremap = true })
 
 vim.pack.add({
@@ -63,7 +89,6 @@ vim.pack.add({
   { src = "https://github.com/echasnovski/mini.pick" },
   { src = "https://github.com/nvim-treesitter/nvim-treesitter" },
   { src = "https://github.com/neovim/nvim-lspconfig" },
-  -- { src = "https://github.com/arnamak/stay-centered.nvim" },
   { src = "https://github.com/windwp/nvim-autopairs" },
   { src = "https://github.com/nvim-mini/mini.ai" },
   { src = "https://github.com/brenton-leighton/multiple-cursors.nvim" },
@@ -73,9 +98,12 @@ vim.pack.add({
   { src = "https://github.com/ramojus/mellifluous.nvim" },
   { src = "https://github.com/blazkowolf/gruber-darker.nvim" },
   { src = "https://github.com/thesimonho/kanagawa-paper.nvim"},
-  { src = "https://github.com/rebelot/kanagawa.nvim"},
-  { src = "https://github.com/Shatur/neovim-ayu"},
-  { src = "https://github.com/tanvirtin/monokai.nvim"},
+  { src = "https://github.com/rebelot/kanagawa.nvim" },
+  { src = "https://github.com/Shatur/neovim-ayu" },
+  { src = "https://github.com/tanvirtin/monokai.nvim" },
+  -- { src = "https://github.com/github/copilot.vim" },
+  { src = "https://github.com/supermaven-inc/supermaven-nvim" },
+  { src = "https://github.com/xero/miasma.nvim" },
 })
 
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -128,16 +156,42 @@ vim.cmd("set completeopt+=noselect")
 require "mini.pick".setup()
 require "mini.ai".setup()
 require "multiple-cursors".setup()
+-- require "copilot.vim".setup()
+
+require("supermaven-nvim").setup({
+  keymaps = {
+    accept_suggestion = "<Tab>",
+    clear_suggestion = "<C-]>",
+  },
+  -- ignore_filetypes = { cpp = true }, -- or { "cpp", }
+  color = {
+    suggestion_color = "#ffffff",
+    cterm = 244,
+  },
+  log_level = "info", -- set to "off" to disable logging completely
+  disable_inline_completion = false, -- disables inline completion for use with cmp
+  disable_keymaps = false, -- disables built in keymaps for more manual control
+  condition = function()
+    return false
+  end -- condition to check for stopping supermaven, `true` means to stop supermaven when the condition is true.
+})
+
 -- require "oil".setup()
--- require "stay-centered".setup()
-require "nvim-autopairs".setup()
+-- require "nvim-autopairs".setup()
 require "nvim-treesitter.configs".setup({
-  ensure_installed = { "typescript", "javascript", "zig", "c", "python", "cpp", "kotlin", "typst" },
+  ensure_installed = { "typescript", "javascript", "zig", "c", "python", "cpp", "kotlin", "typst", "dart", "go" },
   highlight = { enable = true }
 })
 
+
+vim.lsp.config.dartls = {
+  cmd = { "dart", "language-server", "--protocol=lsp" },
+  filetypes = { "dart" },
+  root_markers = { "pubspec.yaml" },
+}
+
 vim.lsp.enable({ "lua_ls", "zls", "clangd", "typescript-language-server", "tailwindcss-language-server",
-  "prisma-language-server", "kotlin-language-server", "marksman", "tinymist", "pyright", "asm-lsp" })
+  "prisma-language-server", "kotlin-language-server", "marksman", "tinymist", "pyright", "asm-lsp", "dartls", "gopls" })
 -- vim.cmd("colorscheme jellybeans-mono")
 -- vim.cmd("colorscheme jellybeans-default")
 -- vim.cmd("colorscheme jellybeans")
@@ -146,17 +200,20 @@ vim.lsp.enable({ "lua_ls", "zls", "clangd", "typescript-language-server", "tailw
 -- vim.cmd("colorscheme mine-pine-prime")
 -- vim.cmd("colorscheme mellifluous")
 -- vim.cmd("colorscheme desert")
-vim.cmd("colorscheme retrobox")
+-- vim.cmd("colorscheme retrobox")
 -- vim.cmd("colorscheme habamax")
 -- vim.cmd("colorscheme peachpuff")
 -- vim.cmd("colorscheme slate")
 -- vim.cmd("colorscheme quiet")
--- vim.cmd("colorscheme gruber-darker")
+vim.cmd("colorscheme gruber-darker")
 -- vim.cmd("colorscheme kanagawa-paper")
 -- vim.cmd("colorscheme kanagawa")
+-- vim.cmd("colorscheme kanagawa-lotus")
 -- vim.cmd("colorscheme ayu")
 -- vim.cmd("colorscheme monokai")
 -- vim.cmd("colorscheme monokai_ristretto")
+-- vim.cmd("colorscheme miasma")
+-- vim.cmd("colorscheme blue")
 
 vim.keymap.set("n", "<leader>ff", ':Pick files<CR>')
 vim.keymap.set("n", "<leader>fg", ':Pick grep_live<CR>')
@@ -179,8 +236,8 @@ vim.keymap.set({ "n", "i", "x" }, "<C-Up>", "<Cmd>MultipleCursorsAddUp<CR>", { d
 vim.keymap.set({ "n", "i" }, "<C-LeftMouse>", "<Cmd>MultipleCursorsMouseAddDelete<CR>", { desc = "Add or remove a cursor" })
 -- Add cursors to all matches
 vim.keymap.set({ "n", "x" }, "<Leader>a", "<Cmd>MultipleCursorsAddMatches<CR>", { desc = "Add cursors to the word under the cursor" })
-vim.keymap.set({ "n", "x" }, "<C->>", "<Cmd>MultipleCursorsAddJumpNextMatch<CR>")
-vim.keymap.set({ "n", "x" }, "<C-<>", "<Cmd>MultipleCursorsAddJumpPrevMatch<CR>")
+vim.keymap.set({ "n", "x" }, "<M-n>", "<Cmd>MultipleCursorsAddJumpNextMatch<CR>")
+vim.keymap.set({ "n", "x" }, "<M-N>", "<Cmd>MultipleCursorsAddJumpPrevMatch<CR>")
 vim.keymap.set({ "n", "x" }, "<leader>l", function() require("multiple-cursors").align() end)
 
 -- Make background transparent
@@ -335,11 +392,13 @@ desc = "Kill running processes (typst watch, zathura)",
 
 if vim.g.neovide then
   vim.o.guifont = "Iosevka Fixed"
-  -- vim.o.guifont = "Cascadia Code"
+  -- vim.o.guifont = "Consolas"
+  -- vim.o.guifont = "Cascadia Mono"
   -- vim.o.guifont = "Fira Mono"
   -- vim.o.guifont = "Input Mono"
+  -- vim.o.guifont = "Source Code Pro"
   -- vim.o.guifont = "ComicShannsMono Nerd Font"
-  vim.g.neovide_scale_factor = 2.0
+  vim.g.neovide_scale_factor = 2.5
 
   vim.g.neovide_cursor_trail_size = 2.0
   vim.g.neovide_cursor_antialiasing = true
@@ -349,8 +408,8 @@ if vim.g.neovide then
     vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + delta
   end
 
-  vim.keymap.set({ 'n', 'v', 'x', 't' }, "<C-=>", function() change_scale(0.1) end, { desc = "Zoom in" })
-  vim.keymap.set("n", "<C-->", function() change_scale(-0.1) end, { desc = "Zoom out" })
-  vim.keymap.set({ 'n', 'v', 'x', 't' }, "<C-0>", function() vim.g.neovide_scale_factor = 2.0 end,
+  vim.keymap.set({ 'n', 'v', 'x', 't' }, "<C-=>", function() change_scale(0.3) end, { desc = "Zoom in" })
+  vim.keymap.set({ 'n', 'v', 'x', 't' }, "<C-->", function() change_scale(-0.3) end, { desc = "Zoom out" })
+  vim.keymap.set({ 'n', 'v', 'x', 't' }, "<C-0>", function() vim.g.neovide_scale_factor = 2.5 end,
     { desc = "Reset zoom" })
 end
