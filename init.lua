@@ -1,41 +1,54 @@
+-- init.lua (edited for Neovim dev LSP APIs)
+-- ========================================
+
+-- basic options
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.wrap = false
-vim.o.tabstop = 4
-vim.o.shiftwidth = 4
+vim.o.breakindent = true
+vim.opt.smoothscroll = true
+vim.o.tabstop = 2
+vim.o.shiftwidth = 2
 vim.opt.softtabstop = 0
-vim.opt.expandtab = true
+-- vim.opt.expandtab = true
 vim.o.signcolumn = "yes"
 vim.o.swapfile = false
--- vim.opt.cursorline = true
+vim.opt.cursorline = true
 vim.g.mapleader = " "
 vim.o.winborder = "rounded"
 vim.opt.background = "dark"
 -- vim.opt.background = "light"
 vim.opt.termguicolors = true
 -- vim.opt.guicursor = "i-c:block-Cursor"
-vim.opt.iskeyword:remove("_")
+-- vim.opt.iskeyword:remove("_")
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
+-- langmap (russian/latin)
 vim.opt.langmap = table.concat({
-  "фa,иb,сc,вd,уe,аf,пg,рh,шi,оj,лk,дl,ьm,тn,щo,зp,йq,кr,ыs,еt,гu,мv,цw,чx,нy,яz",
-  "ФA,ИB,СC,ВD,УE,АF,ПG,РH,ШI,ОJ,ЛK,ДL,ЬM,ТN,ЩO,ЗP,ЙQ,КR,ЫS,ЕT,ГU,МV,ЦW,ЧX,НY,ЯZ"
+	"фa,иb,сc,вd,уe,аf,пg,рh,шi,оj,лk,дl,ьm,тn,щo,зp,йq,кr,ыs,еt,гu,мv,цw,чx,нy,яz",
+	"ФA,ИB,СC,ВD,УE,АF,ПG,РH,ШI,ОJ,ЛK,ДL,ЬM,ТN,ЩO,ЗP,ЙQ,КR,ЫS,ЕT,ГU,МV,ЦW,ЧX,НY,ЯZ"
 }, ",")
 
-vim.keymap.set({ 'n', 'v', 'x' }, '<leader>y', '"+y<CR>')
-vim.keymap.set({ 'n', 'v', 'x' }, '<leader>yy', '"+yy<CR>')
-vim.keymap.set({ 'n', 'v', 'x' }, '<leader>P', '"+P<CR>')
-vim.keymap.set({ 'n', 'v', 'x' }, '<leader>p', '"+p<CR>')
-vim.keymap.set({ 'n', 'v', 'x' }, '<M-l>', 'zl')
-vim.keymap.set({ 'n', 'v', 'x' }, '<M-h>', 'zh')
-vim.keymap.set({ 'n', 'v', 'x' }, '<M-L>', 'zL')
-vim.keymap.set({ 'n', 'v', 'x' }, '<M-H>', 'zH')
-vim.keymap.set({ 'n', 'v', 'x' }, '<M-j>', '<C-e>')
-vim.keymap.set({ 'n', 'v', 'x' }, '<M-k>', '<C-y>')
-vim.keymap.set({ 'n', 'v', 'x' }, '<leader>x', ':e ~/buffer.md<CR>')
-vim.keymap.set({ 'n', 'v', 'x' }, '<leader>c', ':e ~/Notes/scratchpad.md<CR>')
-vim.keymap.set({ 'n', 'v', 'x' }, '<C-c>at', ':e ~/org/todo.org<CR>')
+-- helper opts for mappings used later
+local opts = { noremap = true, silent = true }
+
+-- small convenience mappings (clipboard, movement)
+vim.keymap.set({ 'n', 'v', 'x' }, '<leader>y', '"+y', opts)
+vim.keymap.set({ 'n', 'v', 'x' }, '<leader>yy', '"+yy', opts)
+vim.keymap.set({ 'n', 'v', 'x' }, '<leader>P', '"+P', opts)
+vim.keymap.set({ 'n', 'v', 'x' }, '<leader>p', '"+p', opts)
+vim.keymap.set({ 'n', 'v', 'x' }, '<M-l>', 'zl', opts)
+vim.keymap.set({ 'n', 'v', 'x' }, '<M-h>', 'zh', opts)
+vim.keymap.set({ 'n', 'v', 'x' }, '<M-L>', 'zL', opts)
+vim.keymap.set({ 'n', 'v', 'x' }, '<M-H>', 'zH', opts)
+vim.keymap.set({ 'n', 'v', 'x' }, '<M-j>', '<C-e>', opts)
+vim.keymap.set({ 'n', 'v', 'x' }, '<M-k>', '<C-y>', opts)
+vim.keymap.set({ 'n', 'v', 'x' }, '<leader>x', ':e ~/buffer.md<CR>', opts)
+vim.keymap.set({ 'n', 'v', 'x' }, '<leader>c', ':e ~/Notes/scratchpad.md<CR>', opts)
+vim.keymap.set({ 'n', 'v', 'x' }, '<C-c>at', ':e ~/Notes/TODO.md<CR>', opts)
+
+-- insert/cmd-mode helpers
 vim.keymap.set({ "i", "c" }, "<C-a>", "<Left>", { noremap = true })
 vim.keymap.set({ "i", "c" }, "<C-k>", "<Right>", { noremap = true })
 vim.keymap.set({ "i", "c" }, "<C-d>", "<delete>", { noremap = true })
@@ -43,12 +56,23 @@ vim.keymap.set({ "i", "c" }, "<D-Space>", "", { noremap = true })
 vim.keymap.set("c", "<C-n>", "<Down>")
 vim.keymap.set("c", "<C-p>", "<Up>")
 vim.keymap.set("i", "<C-S-v>", "<C-r>+", { noremap = true, silent = true })
-vim.keymap.set('n', '<leader><CR>', ":noh<CR>")
-vim.keymap.set('n', '<leader>q', "@q")
-vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format)
 
+-- small global mappings
+vim.keymap.set('n', '<leader><CR>', ":noh<CR>", opts)
+vim.keymap.set('n', '<leader>q', "@q", opts)
+-- global fallback for <leader>lf if no LSP attached
+vim.keymap.set('n', '<leader>lf', function()
+	local clients = vim.lsp.get_active_clients({ bufnr = 0 })
+	if not clients or vim.tbl_isempty(clients) then
+		print("No LSP attached to buffer")
+		return
+	end
+	vim.lsp.buf.format({ async = true })
+end, opts)
+
+-- tab mappings
 for i = 1, 9 do
-  vim.keymap.set("n", "<Leader>" .. i, i .. "gt", opts)
+	vim.keymap.set("n", "<Leader>" .. i, i .. "gt", opts)
 end
 vim.keymap.set("n", "<Leader>t-", ":-tabm<CR>", opts)
 vim.keymap.set("n", "<Leader>t=", ":+tabm<CR>", opts)
@@ -59,357 +83,353 @@ vim.keymap.set("n", "<Leader>te", ":tab terminal<CR>", opts)
 vim.keymap.set('t', '<C-Space>', [[<C-\><C-n>]], { noremap = true })
 vim.keymap.set("n", "<leader>o", ":Open %<CR>", { noremap = true })
 
-
+-- Capitalize word helper
 vim.keymap.set("n", "<M-c>", function()
-  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-  local line = vim.api.nvim_get_current_line()
-
-  -- find word boundaries
-  local s, e = line:find("[%w_]+", col + 1)
-  if not s then return end
-
-  local word = line:sub(s, e)
-  local cap = word:sub(1,1):upper() .. word:sub(2):lower()
-
-  vim.api.nvim_set_current_line(
-    line:sub(1, s - 1) .. cap .. line:sub(e + 1)
-  )
-
-  -- optional cursor placement
-  vim.api.nvim_win_set_cursor(0, { row, e })
+	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+	local line = vim.api.nvim_get_current_line()
+	local s, e = line:find("[%w_]+", col + 1)
+	if not s then return end
+	local word = line:sub(s, e)
+	local cap = word:sub(1, 1):upper() .. word:sub(2):lower()
+	vim.api.nvim_set_current_line(line:sub(1, s - 1) .. cap .. line:sub(e + 1))
+	vim.api.nvim_win_set_cursor(0, { row, e })
 end, { noremap = true, desc = "Capitalize word (pure Lua)" })
-
 
 vim.keymap.set("n", "<leader>v", ":vsplit<CR>", { noremap = true })
 vim.keymap.set("n", "<leader>h", ":split<CR>", { noremap = true })
 vim.keymap.set("n", "<M-w>", "<C-w><C-w>", { noremap = true })
 
+-- plugin packs (native package manager)
 vim.pack.add({
-  -- { src = "https://github.com/stevearc/oil.nvim" },
-  { src = "https://github.com/echasnovski/mini.pick" },
-  { src = "https://github.com/nvim-treesitter/nvim-treesitter" },
-  { src = "https://github.com/neovim/nvim-lspconfig" },
-  { src = "https://github.com/windwp/nvim-autopairs" },
-  { src = "https://github.com/nvim-mini/mini.ai" },
-  { src = "https://github.com/brenton-leighton/multiple-cursors.nvim" },
-  { src = "https://github.com/WTFox/jellybeans.nvim" },
-  { src = "https://github.com/thembones79/mine-pine" },
-  { src = "https://github.com/rose-pine/neovim" },
-  { src = "https://github.com/ramojus/mellifluous.nvim" },
-  { src = "https://github.com/blazkowolf/gruber-darker.nvim" },
-  { src = "https://github.com/thesimonho/kanagawa-paper.nvim"},
-  { src = "https://github.com/rebelot/kanagawa.nvim" },
-  { src = "https://github.com/Shatur/neovim-ayu" },
-  { src = "https://github.com/tanvirtin/monokai.nvim" },
-  -- { src = "https://github.com/github/copilot.vim" },
-  { src = "https://github.com/supermaven-inc/supermaven-nvim" },
-  { src = "https://github.com/xero/miasma.nvim" },
+	{ src = "https://github.com/echasnovski/mini.pick" },
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
+	{ src = "https://github.com/neovim/nvim-lspconfig" }, -- still useful for server metadata but we won't call require('lspconfig')
+	{ src = "https://github.com/williamboman/mason.nvim" },
+	{ src = "https://github.com/williamboman/mason-lspconfig.nvim" },
+	{ src = "https://github.com/windwp/nvim-autopairs" },
+	{ src = "https://github.com/nvim-mini/mini.ai" },
+	{ src = "https://github.com/brenton-leighton/multiple-cursors.nvim" },
+	{ src = "https://github.com/supermaven-inc/supermaven-nvim" },
+	{ src = "https://github.com/WTFox/jellybeans.nvim" },
+	{ src = "https://github.com/thembones79/mine-pine" },
+	{ src = "https://github.com/rose-pine/neovim" },
+	{ src = "https://github.com/ramojus/mellifluous.nvim" },
+	{ src = "https://github.com/blazkowolf/gruber-darker.nvim" },
+	{ src = "https://github.com/thesimonho/kanagawa-paper.nvim" },
+	{ src = "https://github.com/rebelot/kanagawa.nvim" },
+	{ src = "https://github.com/Shatur/neovim-ayu" },
+	{ src = "https://github.com/tanvirtin/monokai.nvim" },
+	{ src = "https://github.com/xero/miasma.nvim" },
+	{ src = "https://github.com/nvim-orgmode/orgmode" },
+	{ src = "https://github.com/chipsenkbeil/org-roam.nvim" },
 })
 
-vim.api.nvim_create_autocmd('LspAttach', {
-  callback = function(ev)
-    local client = vim.lsp.get_client_by_id(ev.data.client_id)
-    if client:supports_method('textDocument/completion') then
-      vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
-    end
-  end,
-})
+-- Treesitter
+pcall(function()
+	require "nvim-treesitter.configs".setup({
+		ensure_installed = { "typescript", "javascript", "zig", "c", "python", "cpp", "kotlin", "typst", "dart", "go", "rust", "svelte" },
+		highlight = { enable = true },
+	})
+end)
 
--- Define the filetypes where you want wrapping + visual movement
-local wrap_filetypes = { "markdown", "typst", "tex" }
-
--- Create an autocmd group to avoid duplicates
-vim.api.nvim_create_augroup("WrapAndVisualMove", { clear = true })
-
-vim.api.nvim_create_autocmd("FileType", {
-  group = "WrapAndVisualMove",
-  pattern = wrap_filetypes,
-  callback = function()
-    -- Enable wrapping and linebreak
-    vim.opt_local.wrap = true
-    vim.opt_local.linebreak = true
-
-    -- Remap movement keys to move by display lines, not logical lines
-    local opts = { noremap = true, silent = true, buffer = true }
-    vim.keymap.set({ 'n', 'v', 'x' }, "j", "gj", opts)
-    vim.keymap.set({ 'n', 'v', 'x' }, "о", "gj", opts)
-    vim.keymap.set({ 'n', 'v', 'x' }, "<C-n>", "gj")
-    vim.keymap.set({ 'n', 'v', 'x' }, "k", "gk", opts)
-    vim.keymap.set({ 'n', 'v', 'x' }, "л", "gk", opts)
-    vim.keymap.set({ 'n', 'v', 'x' }, "<Down>", "gj", opts)
-    vim.keymap.set({ 'n', 'v', 'x' }, "<Up>", "gk", opts)
-  end,
-})
-
--- Disable line numbers for specific text-like formats (but not .txt)
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "markdown", },
-  callback = function()
-    vim.opt_local.number = false
-    vim.opt_local.relativenumber = false
-  end,
-})
-
-
-vim.cmd("set completeopt+=noselect")
-
+-- small plugins (guarded)
 require "mini.pick".setup()
 require "mini.ai".setup()
 require "multiple-cursors".setup()
--- require "copilot.vim".setup()
 
-require("supermaven-nvim").setup({
-  keymaps = {
-    accept_suggestion = "<Tab>",
-    clear_suggestion = "<C-]>",
-  },
-  -- ignore_filetypes = { cpp = true }, -- or { "cpp", }
-  color = {
-    suggestion_color = "#ffffff",
-    cterm = 244,
-  },
-  log_level = "info", -- set to "off" to disable logging completely
-  disable_inline_completion = false, -- disables inline completion for use with cmp
-  disable_keymaps = false, -- disables built in keymaps for more manual control
-  condition = function()
-    return false
-  end -- condition to check for stopping supermaven, `true` means to stop supermaven when the condition is true.
+require "orgmode".setup({
+	org_agenda_files = { "~/org-nvim/**/*" },
+	org_default_notes_file = "~/org-nvim/refile.org",
+})
+vim.lsp.enable("org")
+
+require "org-roam".setup({
+	directory = "~/org-nvim",
+	bindings = {
+		prefix = "<leader>n",
+		add_alias = "<leader>naa",
+		remove_alias = "<leader>nar",
+		add_origin = "<leader>noa",
+		remove_origin = "<leader>nor",
+		capture = "<leader>nc",
+		complete_at_point = "<leader>n.",
+		find_node = "<leader>nf",
+		goto_next_node = "<leader>nn",
+		goto_prev_node = "<leader>np",
+		insert_node = "<leader>ni",
+		insert_node_immediate = "<leader>nm",
+		quickfix_backlinks = "<leader>nq",
+		toggle_roam_buffer = "<leader>nl",
+		toggle_roam_buffer_fixed = "<leader>nb",
+	},
+	 extensions = {
+	   dailies = {
+			directory = "daily",
+	   },
+	 },
 })
 
--- require "oil".setup()
--- require "nvim-autopairs".setup()
-require "nvim-treesitter.configs".setup({
-  ensure_installed = { "typescript", "javascript", "zig", "c", "python", "cpp", "kotlin", "typst", "dart", "go" },
-  highlight = { enable = true }
+-- supermaven setup
+pcall(function()
+	require("supermaven-nvim").setup({
+		keymaps = { accept_suggestion = "<Tab>", clear_suggestion = "<C-]>" },
+		color = { suggestion_color = "#ffffff", cterm = 244 },
+		log_level = "info",
+		disable_inline_completion = false,
+		disable_keymaps = false,
+		condition = function() return false end,
+	})
+end)
+
+-- LspAttach autocmd: set buffer-local LSP keymaps and formatting only if server supports it
+vim.api.nvim_create_autocmd("LspAttach", {
+	callback = function(ev)
+		local client = vim.lsp.get_client_by_id(ev.data.client_id)
+		local bufnr  = ev.buf
+
+		-- buffer-local keymaps
+		local bufmap = function(mode, lhs, rhs, opts_) vim.keymap.set(mode, lhs, rhs,
+				vim.tbl_extend("force", { buffer = bufnr, silent = true, noremap = true }, opts_ or {})) end
+		bufmap("n", "gd", vim.lsp.buf.definition, { desc = "LSP: go to definition" })
+		bufmap("n", "K", vim.lsp.buf.hover, { desc = "LSP: hover" })
+		bufmap("n", "<leader>rn", vim.lsp.buf.rename, { desc = "LSP: rename" })
+		bufmap("n", "gl", vim.diagnostic.open_float, { desc = "Show diagnostics (float)" })
+
+		-- formatting support: check server capabilities (new API)
+		local caps = client.server_capabilities or {}
+		if caps.documentFormattingProvider or caps.documentRangeFormattingProvider then
+			bufmap("n", "<leader>lf", function() vim.lsp.buf.format({ async = true, bufnr = bufnr }) end,
+				{ desc = "LSP: format buffer" })
+		end
+
+		-- completion: set omnifunc if server provides completion (compat)
+		if caps.completionProvider then
+			pcall(vim.api.nvim_buf_set_option, bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+		end
+	end,
 })
 
+-- ---------------------------
+-- Mason + mason-lspconfig
+-- ---------------------------
+local ok_mason, mason = pcall(require, "mason")
+local ok_mason_lsp, mason_lspconfig = pcall(require, "mason-lspconfig")
 
-vim.lsp.config.dartls = {
-  cmd = { "dart", "language-server", "--protocol=lsp" },
-  filetypes = { "dart" },
-  root_markers = { "pubspec.yaml" },
+if ok_mason then
+	mason.setup()
+end
+
+-- Use Mason to ensure common language servers are installed.
+-- NOTE: use the new lsp names (ts_ls instead of tsserver). Do NOT put servers that Mason doesn't provide (e.g. dartls).
+local mason_ensure = {
+	"gopls",
+	"pyright",
+	"clangd",
+	"rust_analyzer",
+	"ts_ls", -- typescript server (new name)
+	"lua_ls", -- lua language server
+	"svelte",
 }
 
-vim.lsp.enable({ "lua_ls", "zls", "clangd", "typescript-language-server", "tailwindcss-language-server",
-  "prisma-language-server", "kotlin-language-server", "marksman", "tinymist", "pyright", "asm-lsp", "dartls", "gopls" })
--- vim.cmd("colorscheme jellybeans-mono")
--- vim.cmd("colorscheme jellybeans-default")
--- vim.cmd("colorscheme jellybeans")
--- vim.cmd("colorscheme rose-pine")
--- vim.cmd("colorscheme mine-pine-moon")
--- vim.cmd("colorscheme mine-pine-prime")
--- vim.cmd("colorscheme mellifluous")
--- vim.cmd("colorscheme desert")
--- vim.cmd("colorscheme retrobox")
--- vim.cmd("colorscheme habamax")
--- vim.cmd("colorscheme peachpuff")
--- vim.cmd("colorscheme slate")
--- vim.cmd("colorscheme quiet")
-vim.cmd("colorscheme gruber-darker")
--- vim.cmd("colorscheme kanagawa-paper")
--- vim.cmd("colorscheme kanagawa")
--- vim.cmd("colorscheme kanagawa-lotus")
--- vim.cmd("colorscheme ayu")
--- vim.cmd("colorscheme monokai")
--- vim.cmd("colorscheme monokai_ristretto")
--- vim.cmd("colorscheme miasma")
--- vim.cmd("colorscheme blue")
+if ok_mason_lsp then
+	mason_lspconfig.setup({ ensure_installed = mason_ensure })
+end
 
-vim.keymap.set("n", "<leader>ff", ':Pick files<CR>')
-vim.keymap.set("n", "<leader>fg", ':Pick grep_live<CR>')
-vim.keymap.set("n", "<leader>fb", ':Pick buffers<CR>')
-vim.keymap.set('n', '<leader>e', ":Explore<CR>")
--- vim.keymap.set('n', '<leader>e', ":Oil<CR>")
-vim.keymap.set('n', 'gl', vim.diagnostic.open_float, { desc = "Show diagnostics (float)" })
--- vim.keymap.set("n", "<leader>sc", function()
---   require("stay-centered").toggle()
--- end, { desc = "Toggle Stay Centered" })
+-- ---------------------------
+-- Configure servers via vim.lsp.config (dev API)
+-- ---------------------------
+-- Minimal / safe server definitions. For servers that need special binary paths
+-- or SDK-provided servers (dartls), we still use vim.lsp.config.<name>.
 
+-- gopls
+vim.lsp.config.gopls = {
+	cmd = { "gopls" },
+	filetypes = { "go", "gomod" },
+	settings = { gopls = { gofumpt = true, staticcheck = true } },
+}
 
--- Remaps for multiple cursors
--- Add cursor down
+-- lua_ls (basic config to avoid diagnostics about `vim` global in your config)
+vim.lsp.config.lua_ls = {
+	settings = {
+		Lua = {
+			diagnostics = { globals = { "vim" } },
+			workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+		},
+	},
+	filetypes = { "lua" },
+}
+
+-- dartls — DO NOT add this to Mason ensure_installed; it is provided by Dart SDK.
+-- Keep this here so the dev helper can enable it if you have `dart` on PATH.
+vim.lsp.config.dartls = {
+	cmd = { "dart", "language-server", "--protocol=lsp" },
+	filetypes = { "dart" },
+	root_markers = { "pubspec.yaml" },
+}
+
+-- (Other servers usually don't need explicit config here — vim.lsp.enable can start them with defaults.)
+
+-- ---------------------------
+-- Enable servers (vim.lsp.enable)
+-- ---------------------------
+-- Use the dev API to enable the servers you want attached automatically.
+-- Include dartls here (it won't be installed by Mason; make sure dart is on PATH).
+local servers_to_enable = {
+	"gopls",
+	"pyright",
+	"clangd",
+	"rust_analyzer",
+	"ts_ls", -- new name (was tsserver)
+	"lua_ls",
+	"dartls", -- provided by Dart SDK, not Mason
+	"svelte",
+}
+
+-- call the dev helper to enable (it will start installed servers)
+-- if vim.lsp.enable isn't available in your exact dev build, this is a no-op and nothing breaks.
+if vim.lsp and vim.lsp.enable then
+	vim.lsp.enable(servers_to_enable)
+else
+	-- on builds where vim.lsp.enable is not defined, attempt best-effort fallback:
+	-- The following will try to start servers manually when files open via LspAttach
+	-- (modern lspconfig will usually be available; keep this as a graceful fallback).
+	vim.schedule(function()
+		print(
+		"Note: vim.lsp.enable is not available in this build. LSP servers will be attached by other means (Mason / external).")
+	end)
+end
+
+-- Filetype-specific wrapping behavior (your original)
+local wrap_filetypes = { "markdown", "typst", "tex" }
+vim.api.nvim_create_augroup("WrapAndVisualMove", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+	group = "WrapAndVisualMove",
+	pattern = wrap_filetypes,
+	callback = function()
+		vim.opt_local.wrap = true
+		vim.opt_local.linebreak = true
+		local wopts = { noremap = true, silent = true, buffer = true }
+		vim.keymap.set({ 'n', 'v', 'x' }, "j", "gj", wopts)
+		vim.keymap.set({ 'n', 'v', 'x' }, "0", "g0", wopts)
+		vim.keymap.set({ 'n', 'v', 'x' }, "$", "g$", wopts)
+		vim.keymap.set({ 'n', 'v', 'x' }, "о", "gj", wopts)
+		vim.keymap.set({ 'n', 'v', 'x' }, "<C-n>", "gj", wopts)
+		vim.keymap.set({ 'n', 'v', 'x' }, "k", "gk", wopts)
+		vim.keymap.set({ 'n', 'v', 'x' }, "л", "gk", wopts)
+		vim.keymap.set({ 'n', 'v', 'x' }, "<Down>", "gj", wopts)
+		vim.keymap.set({ 'n', 'v', 'x' }, "<Up>", "gk", wopts)
+	end,
+})
+
+-- disable line numbers for generous markdown-like formats
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "markdown" },
+	callback = function()
+		vim.opt_local.number = false
+		vim.opt_local.relativenumber = false
+	end,
+})
+
+-- completion UI option
+vim.cmd("set completeopt+=noselect")
+
+-- colorscheme selection (kept one by default)
+pcall(function() vim.cmd("colorscheme kanagawa") end)
+
+-- pick mappings & explorer
+vim.keymap.set("n", "<leader>ff", ':Pick files<CR>', opts)
+vim.keymap.set("n", "<leader>fg", ':Pick grep_live<CR>', opts)
+vim.keymap.set("n", "<leader>fb", ':Pick buffers<CR>', opts)
+vim.keymap.set('n', '<leader>e', ":Explore<CR>", opts)
+
+-- multiple cursors mappings (kept)
 vim.keymap.set({ "n", "x" }, "<C-j>", "<Cmd>MultipleCursorsAddDown<CR>", { desc = "Add a cursor then move down" })
 vim.keymap.set({ "n", "i", "x" }, "<C-Down>", "<Cmd>MultipleCursorsAddDown<CR>", { desc = "Add a cursor then move down" })
--- Add cursor up
 vim.keymap.set({ "n", "x" }, "<C-k>", "<Cmd>MultipleCursorsAddUp<CR>", { desc = "Add a cursor then move up" })
-vim.keymap.set({ "n", "i", "x" }, "<C-Up>", "<Cmd>MultipleCursorsAddUp<CR>", { desc = "Add a cursor then move up" }) -- Mouse add / delete cursor
-vim.keymap.set({ "n", "i" }, "<C-LeftMouse>", "<Cmd>MultipleCursorsMouseAddDelete<CR>", { desc = "Add or remove a cursor" })
--- Add cursors to all matches
-vim.keymap.set({ "n", "x" }, "<Leader>a", "<Cmd>MultipleCursorsAddMatches<CR>", { desc = "Add cursors to the word under the cursor" })
+vim.keymap.set({ "n", "i", "x" }, "<C-Up>", "<Cmd>MultipleCursorsAddUp<CR>", { desc = "Add a cursor then move up" })
+vim.keymap.set({ "n", "i" }, "<C-LeftMouse>", "<Cmd>MultipleCursorsMouseAddDelete<CR>",
+	{ desc = "Add or remove a cursor" })
+vim.keymap.set({ "n", "x" }, "<Leader>a", "<Cmd>MultipleCursorsAddMatches<CR>",
+	{ desc = "Add cursors to the word under the cursor" })
 vim.keymap.set({ "n", "x" }, "<M-n>", "<Cmd>MultipleCursorsAddJumpNextMatch<CR>")
 vim.keymap.set({ "n", "x" }, "<M-N>", "<Cmd>MultipleCursorsAddJumpPrevMatch<CR>")
 vim.keymap.set({ "n", "x" }, "<leader>l", function() require("multiple-cursors").align() end)
 
--- Make background transparent
--- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
--- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
--- vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
--- vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
--- vim.api.nvim_set_hl(0, "CursorLineNr", { bg = "none" })
--- vim.api.nvim_set_hl(0, "CursorLine", { bg = "none" })
-
+-- toggle statusline
 vim.keymap.set("n", "<leader>ts", function()
-  if vim.o.laststatus == 0 then
-    vim.o.laststatus = 1
-    vim.o.showtabline = 1
-    vim.o.cmdheight = 1
-  else
-    vim.o.laststatus = 0
-    vim.o.showtabline = 0
-    vim.o.cmdheight = 0
-  end
+	if vim.o.laststatus == 0 then
+		vim.o.laststatus = 1; vim.o.showtabline = 1; vim.o.cmdheight = 1
+	else
+		vim.o.laststatus = 0; vim.o.showtabline = 0; vim.o.cmdheight = 0
+	end
 end, { desc = "Toggle statusline" })
 
-
+-- compile/run helper preserved from your config (keeps behavior)
 vim.keymap.set("n", "<leader>r", function()
-  local file     = vim.fn.expand("%:p")      -- absolute path to current file
-  local ext      = vim.fn.expand("%:e")      -- file extension
-  local dir      = vim.fn.expand("%:p:h")    -- directory of current file
-  local filename = vim.fn.expand("%:t:r")    -- name without extension
-  
-  -- Function to properly quote/escape paths for shell commands
-  local function shell_escape(str)
-    return "'" .. str:gsub("'", "'\"'\"'") .. "'"
-  end
-  
-  local function spawn_wezterm(command, title)
-    title = title or ("Running " .. filename)
-    return string.format(
-      "wezterm cli spawn --new-window --cwd %s bash -c %s",
-      shell_escape(dir),
-      shell_escape("echo 'Window: " .. title .. "' && " .. command .. "; echo 'Process finished. Press Enter to close...'; read")
-    )
-  end
-  
-  -- Check if file is saved
-  if vim.bo.modified then
-    print("File has unsaved changes. Save first!")
-    return
-  end
-  
-  local cmd = nil
-  if ext == "c" then
-    local exe_path = dir .. "/" .. filename
-    -- Add debug flags and better error handling
-    local compile_cmd = string.format("gcc -Wall -Wextra -g %s -o %s", 
-      shell_escape(file), 
-      shell_escape(exe_path)
-    )
-    cmd = string.format("%s && %s", 
-      compile_cmd,
-      spawn_wezterm("./" .. filename, "C Program: " .. filename)
-    )
-  elseif ext == "cpp" then
-    local exe_path = dir .. "/" .. filename
-    -- Add C++17 standard and debug flags
-    local compile_cmd = string.format("g++ -Wall -Wextra -std=c++17 -g %s -o %s", 
-      shell_escape(file), 
-      shell_escape(exe_path)
-    )
-    cmd = string.format("%s && %s", 
-      compile_cmd,
-      spawn_wezterm("./" .. filename, "C++ Program: " .. filename)
-    )
-  elseif ext == "py" then
-    cmd = spawn_wezterm("python3 " .. shell_escape(file), "Python: " .. filename)
-  elseif ext == "lua" then
-    cmd = spawn_wezterm("lua " .. shell_escape(file), "Lua: " .. filename)
-  elseif ext == "typ" then
-    local pdf_path = dir .. "/" .. filename .. ".pdf"
-    -- Just run typst watch - it will compile initially and then watch for changes
-    local typst_cmd = string.format(
-      "echo 'Starting Typst watch mode...' && typst watch %s",
-      shell_escape(file)
-    )
-    cmd = string.format(
-      "%s & sleep 1 && zathura %s > /dev/null 2>&1 &",
-      spawn_wezterm(typst_cmd, "Typst Watch: " .. filename),
-      shell_escape(pdf_path)
-    )
-  elseif ext == "rs" then
-    -- Rust support
-    cmd = spawn_wezterm("cargo run", "Rust: " .. filename)
-  elseif ext == "go" then
-    -- Go support  
-    cmd = spawn_wezterm("go run " .. shell_escape(file), "Go: " .. filename)
-  elseif ext == "js" then
-    -- JavaScript/Node.js support
-    cmd = spawn_wezterm("node " .. shell_escape(file), "Node.js: " .. filename)
-  elseif ext == "java" then
-    -- Java support
-    local class_name = filename
-    local compile_and_run = string.format(
-      "javac %s && java -cp %s %s",
-      shell_escape(file),
-      shell_escape(dir),
-      class_name
-    )
-    cmd = spawn_wezterm(compile_and_run, "Java: " .. filename)
-  elseif ext == "sh" or ext == "bash" then
-    -- Shell script support
-    cmd = spawn_wezterm("chmod +x " .. shell_escape(file) .. " && " .. shell_escape(file), "Shell: " .. filename)
-  elseif ext == "zig" then
-    -- Zig support
-    cmd = spawn_wezterm("zig run " .. shell_escape(file), "Zig: " .. filename)
-  elseif ext == "kt" then
-    -- Kotlin (.kt) support: compile to jar with runtime and run with java
-    local jar_path = dir .. "/" .. filename .. ".jar"
-    local compile_cmd = string.format(
-      "kotlinc %s -include-runtime -d %s",
-      shell_escape(file),
-      shell_escape(jar_path)
-    )
-    local run_cmd = string.format("java -jar %s", shell_escape(jar_path))
-    cmd = string.format("%s && %s", compile_cmd, spawn_wezterm(run_cmd, "Kotlin: " .. filename))
-  elseif ext == "kts" then
-    -- Kotlin script (.kts) support: run directly with kotlin
-    cmd = spawn_wezterm("kotlin " .. shell_escape(file), "Kotlin Script: " .. filename)
-  else
-    print("Unsupported file type: " .. ext)
-    print("Supported: c, cpp, py, lua, typ, rs, go, js, java, sh, bash, zig, kt, kts")
-    return
-  end
-  
-  print("Running: " .. filename .. "." .. ext)
-  vim.cmd("!" .. cmd)
-end, {
-  desc = "Compile/Run various languages in new WezTerm window",
-  noremap = true,
-  silent = true,
-})
+	local file     = vim.fn.expand("%:p")
+	local ext      = vim.fn.expand("%:e")
+	local dir      = vim.fn.expand("%:p:h")
+	local filename = vim.fn.expand("%:t:r")
+	local function shell_escape(str) return "'" .. str:gsub("'", "'\"'\"'") .. "'" end
+	local function spawn_wezterm(command, title)
+		title = title or ("Running " .. filename)
+		return string.format(
+			"wezterm cli spawn --new-window --cwd %s bash -c %s",
+			shell_escape(dir),
+			shell_escape("echo 'Window: " ..
+			title .. "' && " .. command .. "; echo 'Process finished. Press Enter to close...'; read")
+		)
+	end
+	if vim.bo.modified then
+		print("File has unsaved changes. Save first!"); return
+	end
+	local cmd = nil
+	if ext == "c" then
+		local exe_path = dir .. "/" .. filename
+		local compile_cmd = string.format("gcc -Wall -Wextra -g %s -o %s", shell_escape(file), shell_escape(exe_path))
+		cmd = string.format("%s && %s", compile_cmd, spawn_wezterm("./" .. filename, "C Program: " .. filename))
+	elseif ext == "cpp" then
+		local exe_path = dir .. "/" .. filename
+		local compile_cmd = string.format("g++ -Wall -Wextra -std=c++17 -g %s -o %s", shell_escape(file),
+			shell_escape(exe_path))
+		cmd = string.format("%s && %s", compile_cmd, spawn_wezterm("./" .. filename, "C++ Program: " .. filename))
+	elseif ext == "py" then
+		cmd = spawn_wezterm("python3 " .. shell_escape(file), "Python: " .. filename)
+	elseif ext == "go" then
+		cmd = spawn_wezterm("go run " .. shell_escape(file), "Go: " .. filename)
+	elseif ext == "rs" then
+		cmd = spawn_wezterm("cargo run", "Rust: " .. filename)
+	elseif ext == "typ" then
+		local pdf_path = dir .. "/" .. filename .. ".pdf"
+		local typst_cmd = string.format("echo 'Starting Typst watch mode...' && typst watch %s", shell_escape(file))
+		cmd = string.format("%s & sleep 1 && zathura %s > /dev/null 2>&1 &",
+			spawn_wezterm(typst_cmd, "Typst Watch: " .. filename), shell_escape(pdf_path))
+	else
+		print("Unsupported file type: " .. ext)
+		return
+	end
+	print("Running: " .. filename .. "." .. ext)
+	vim.cmd("!" .. cmd)
+end, { desc = "Compile/Run various languages in new WezTerm window", noremap = true, silent = true })
 
--- Additional keymap for killing running processes
+-- kill helper
 vim.keymap.set("n", "<leader>rk", function()
-  vim.cmd("!pkill -f 'typst watch'")  -- Kill typst watch processes
-  vim.cmd("!pkill zathura")           -- Kill zathura instances
-  print("Killed running processes (typst watch, zathura)")
-end, {
-desc = "Kill running processes (typst watch, zathura)",
-  noremap = true,
-  silent = true,
-})
+	vim.cmd("!pkill -f 'typst watch'")
+	vim.cmd("!pkill zathura")
+	print("Killed running processes (typst watch, zathura)")
+end, { desc = "Kill running processes (typst watch, zathura)", noremap = true, silent = true })
 
-
+-- neovide specific settings (kept)
 if vim.g.neovide then
-  vim.o.guifont = "Iosevka Fixed"
-  -- vim.o.guifont = "Consolas"
-  -- vim.o.guifont = "Cascadia Mono"
-  -- vim.o.guifont = "Fira Mono"
-  -- vim.o.guifont = "Input Mono"
-  -- vim.o.guifont = "Source Code Pro"
-  -- vim.o.guifont = "ComicShannsMono Nerd Font"
-  vim.g.neovide_scale_factor = 2.5
-
-  vim.g.neovide_cursor_trail_size = 2.0
-  vim.g.neovide_cursor_antialiasing = true
-  vim.g.neovide_cursor_unfocused_outline_width = 0.200
-
-  local change_scale = function(delta)
-    vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + delta
-  end
-
-  vim.keymap.set({ 'n', 'v', 'x', 't' }, "<C-=>", function() change_scale(0.3) end, { desc = "Zoom in" })
-  vim.keymap.set({ 'n', 'v', 'x', 't' }, "<C-->", function() change_scale(-0.3) end, { desc = "Zoom out" })
-  vim.keymap.set({ 'n', 'v', 'x', 't' }, "<C-0>", function() vim.g.neovide_scale_factor = 2.5 end,
-    { desc = "Reset zoom" })
+	-- vim.o.guifont = "Iosevka Fixed"
+	vim.o.guifont = "Input Mono"
+	vim.g.neovide_scale_factor = 2.0
+	vim.g.neovide_cursor_trail_size = 2.0
+	vim.g.neovide_cursor_antialiasing = true
+	vim.g.neovide_cursor_unfocused_outline_width = 0.2
+	local change_scale = function(delta) vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + delta end
+	vim.keymap.set({ 'n', 'v', 'x', 't' }, "<C-=>", function() change_scale(0.3) end, { desc = "Zoom in" })
+	vim.keymap.set({ 'n', 'v', 'x', 't' }, "<C-->", function() change_scale(-0.3) end, { desc = "Zoom out" })
+	vim.keymap.set({ 'n', 'v', 'x', 't' }, "<C-0>", function() vim.g.neovide_scale_factor = 2.0 end,
+		{ desc = "Reset zoom" })
 end

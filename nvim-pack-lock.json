@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "align.nvim": {
+      "rev": "12ed24b",
+      "src": "https://github.com/Vonr/align.nvim"
+    },
     "ansi-nvim": [],
     "copilot.vim": {
       "rev": "a12fd56",
@@ -28,6 +32,14 @@
     "kanagawa.nvim": {
       "rev": "aef7f5c",
       "src": "https://github.com/rebelot/kanagawa.nvim"
+    },
+    "mason-lspconfig.nvim": {
+      "rev": "21c2a84",
+      "src": "https://github.com/williamboman/mason-lspconfig.nvim"
+    },
+    "mason.nvim": {
+      "rev": "44d1e90",
+      "src": "https://github.com/williamboman/mason.nvim"
     },
     "mellifluous.nvim": {
       "rev": "4ce6258",
@@ -81,9 +93,21 @@
       "rev": "7194872",
       "src": "https://github.com/stevearc/oil.nvim"
     },
+    "org-roam.nvim": {
+      "rev": "6c21c86",
+      "src": "https://github.com/chipsenkbeil/org-roam.nvim"
+    },
+    "orgmode": {
+      "rev": "9deee54",
+      "src": "https://github.com/nvim-orgmode/orgmode"
+    },
     "supermaven-nvim": {
       "rev": "07d20fc",
       "src": "https://github.com/supermaven-inc/supermaven-nvim"
+    },
+    "which-key.nvim": {
+      "rev": "3aab214",
+      "src": "https://github.com/folke/which-key.nvim"
     }
   }
 }
