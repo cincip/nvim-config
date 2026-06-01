@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "alpha-nvim": {
+      "rev": "6c6a89d5b068b5251c8bdf0dd57bb921bcfeeb09",
+      "src": "https://github.com/goolord/alpha-nvim"
+    },
     "ef-themes.nvim": {
       "rev": "d9076b0e81cc1ec9f59ab6e65af9317763b7d2bb",
       "src": "https://github.com/oonamo/ef-themes.nvim"
@@ -79,6 +83,10 @@
     "nvim-ts-autotag": {
       "rev": "8e1c0a3",
       "src": "https://github.com/windwp/nvim-ts-autotag"
+    },
+    "nvim-web-devicons": {
+      "rev": "2795c26c916bb3c57dde308b82be51971fa92747",
+      "src": "https://github.com/nvim-tree/nvim-web-devicons"
     },
     "org-roam.nvim": {
       "rev": "6c21c867b178a80fb4ad243c445545e5583d8232",

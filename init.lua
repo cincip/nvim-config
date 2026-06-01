@@ -5,13 +5,13 @@ vim.o.number = true
 vim.o.relativenumber = true
 vim.o.wrap = false
 vim.o.breakindent = true
-vim.opt.smoothscroll = true
+vim.o.smoothscroll = true
 vim.o.tabstop = 4
+vim.o.softtabstop = 0
 vim.o.shiftwidth = 4
-vim.opt.softtabstop = 0
 vim.o.signcolumn = "yes"
 vim.o.swapfile = false
-vim.opt.cursorline = true
+vim.o.cursorline = true
 vim.g.mapleader = " "
 vim.o.winborder = "rounded"
 vim.opt.background = "dark"
@@ -20,7 +20,11 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.cmd("set completeopt+=noselect")
 vim.o.autocomplete = true
+vim.o.inccommand = "split"
+vim.o.undodir = vim.fn.stdpath("data") .. "/undodir"
+vim.o.undofile = true
 vim.g.netrw_liststyle = 1
+-- vim.opt.iskeyword:remove("_")
 
 local function escape(str)
 	local escape_chars = [[;,."|\]]
@@ -61,10 +65,10 @@ vim.keymap.set({ "n", "v", "x" }, "<leader>y",  '"+y',  opts)
 vim.keymap.set({ "n", "v", "x" }, "<leader>yy", '"+yy', opts)
 vim.keymap.set({ "n", "v", "x" }, "<leader>P",  '"+P',  opts)
 vim.keymap.set({ "n", "v", "x" }, "<leader>p",  '"+p',  opts)
-vim.keymap.set({ "n", "v", "x" }, "<leader>u",  function()
-	vim.cmd.packadd("undotree")
-	require("undotree").open()
-end,  opts)
+vim.keymap.set("n", "<leader>u", function()
+    vim.cmd.packadd("nvim.undotree")
+    vim.cmd("Undotree")
+end, opts)
 
 vim.keymap.set({ "n", "v", "x" }, "<M-l>", "zl",      opts)
 vim.keymap.set({ "n", "v", "x" }, "<M-h>", "zh",      opts)
@@ -74,13 +78,31 @@ vim.keymap.set({ "n", "v", "x" }, "<M-j>", "<C-e>",   opts)
 vim.keymap.set({ "n", "v", "x" }, "<M-k>", "<C-y>",   opts)
 vim.keymap.set({ "n", "v", "x" }, "<M-q>", "<C-S-6>", opts)
 
+local win = "<M-w>"
+vim.keymap.set("n", win .. "h", "<C-w>h")
+vim.keymap.set("n", win .. "j", "<C-w>j")
+vim.keymap.set("n", win .. "k", "<C-w>k")
+vim.keymap.set("n", win .. "l", "<C-w>l")
+vim.keymap.set("n", win .. "s", "<C-w>s")
+vim.keymap.set("n", win .. "v", "<C-w>v")
+vim.keymap.set("n", win .. "c", "<C-w>c")
+vim.keymap.set("n", win .. "o", "<C-w>o")
+vim.keymap.set("n", win .. "H", "<C-w>H")
+vim.keymap.set("n", win .. "J", "<C-w>J")
+vim.keymap.set("n", win .. "K", "<C-w>K")
+vim.keymap.set("n", win .. "L", "<C-w>L")
+vim.keymap.set("n", "<M-Up>",    "<cmd>resize +3<cr>")
+vim.keymap.set("n", "<M-Down>",  "<cmd>resize -3<cr>")
+vim.keymap.set("n", "<M-Left>",  "<cmd>vertical resize -5<cr>")
+vim.keymap.set("n", "<M-Right>", "<cmd>vertical resize +5<cr>")
+
 vim.keymap.set({ "n", "v", "x" }, "<leader>x",   ":e ~/buffer.md<CR>",           opts)
 vim.keymap.set({ "n", "v", "x" }, "<leader>c",   ":e ~/Notes/scratchpad.md<CR>", opts)
 vim.keymap.set({ "n", "v", "x" }, "<C-c>at",     ":e ~/org/todo.org<CR>",        opts)
 
-vim.keymap.set({ "i", "c" }, "<C-b>",    "<Left>",   { noremap = true })
-vim.keymap.set({ "i", "c" }, "<C-f>",    "<Right>",  { noremap = true })
-vim.keymap.set({ "i", "c" }, "<C-d>",    "<Delete>", { noremap = true })
+vim.keymap.set({ "i", "c" }, "<C-d>", "<Delete>", { noremap = true })
+vim.keymap.set({ "i", "c" }, "<C-h>", "<Left>",   { noremap = true })
+vim.keymap.set({ "i", "c" }, "<C-l>", "<Right>",  { noremap = true })
 vim.keymap.set({ "i", "c" }, "<C-j>", "<Down>",      { noremap = true })
 vim.keymap.set({ "i", "c" }, "<C-k>", "<Up>",        { noremap = true })
 vim.keymap.set({ "i", "c" }, "<D-Space>", "",        { noremap = true })
@@ -125,6 +147,7 @@ vim.keymap.set("n", "<Leader>tn", ':tabedit <C-r>=escape(expand("%:p:h"), " ")<c
 vim.keymap.set("n", "<Leader>t0", ":tabo<CR>",    opts)
 vim.keymap.set("n", "<Leader>tc", ":tabclose<CR>", opts)
 vim.keymap.set("n", "<Leader>te", ":tab terminal<CR>", opts)
+vim.keymap.set("n", "<leader>ts", "<cmd>setlocal spell!<CR>", { desc = "Toggle Spellcheck" })
 vim.keymap.set("n", "<C-l>",   "gt",       opts)
 vim.keymap.set("n", "<C-h>",   "gT",       opts)
 vim.keymap.set("n", "<C-S-l>", ":bp<CR>",  opts)
@@ -196,7 +219,6 @@ safe_setup("mini.ai")
 safe_setup("multiple-cursors")
 -- safe_setup("nvim-autopairs")
 
-
 local orgmode_ok, orgmode = pcall(require, "orgmode")
 if orgmode_ok then
 	orgmode.setup({
@@ -232,7 +254,6 @@ if roam_ok then
 		},
 	})
 end
-
 
 -- safe_setup("supermaven-nvim", {
 -- 	keymaps = {
@@ -371,11 +392,39 @@ local function set_wrap(extra_maps)
 	if extra_maps then extra_maps(wopts) end
 end
 
+vim.api.nvim_create_autocmd({ "BufNew", "BufEnter" }, {
+	callback = function(args)
+		local buf = args.buf
+
+		-- only unnamed normal buffers
+		if vim.bo[buf].buftype == ""
+		   and vim.api.nvim_buf_get_name(buf) == ""
+		   and vim.bo[buf].filetype == ""
+		then
+			vim.bo[buf].filetype = "markdown"
+		end
+	end,
+})
+
 vim.api.nvim_create_augroup("WrapAndVisualMove", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
 	group   = "WrapAndVisualMove",
 	pattern = { "markdown", "typst", "tex", "org", "mediawiki" },
-	callback = function() set_wrap() end,
+	callback = function()
+		set_wrap()
+		vim.opt_local.spell = true
+		vim.opt_local.spelllang = "en_us,ru,kz"
+
+		-- Dynamically get the path to your spell directory
+		local spell_dir = vim.fn.stdpath("data") .. "/site/spell/"
+
+		-- Explicitly list the three files for 1zg, 2zg, and 3zg
+		vim.opt_local.spellfile = {
+			spell_dir .. "en.utf-8.add",
+			spell_dir .. "ru.utf-8.add",
+			spell_dir .. "kz.utf-8.add",
+		}
+	end,
 })
 
 vim.api.nvim_create_augroup("MathMode", { clear = true })
@@ -384,13 +433,14 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "typst" },
 	callback = function()
 		set_wrap(function(wopts)
-			vim.keymap.set("i", "$",     "$$<Left>",          wopts)
+			-- vim.keymap.set("i", "$",     "$$<Left>",          wopts)
 			vim.keymap.set("i", "MM",    "$<CR><CR>$<Esc>kA", wopts)
-			vim.keymap.set("v", "<C-m>",     "c$$<Esc>P",         { buffer = true })
-			vim.keymap.set("v", "<C-b>", "c**<Esc>P",         { buffer = true })
-			vim.keymap.set("v", "<C-i>", "c__<Esc>P",         { buffer = true })
-			vim.keymap.set("n", "]]", function() vim.fn.search("^=+", "W")  end, { buffer = true })
-			vim.keymap.set("n", "[[", function() vim.fn.search("^=+", "bW") end, { buffer = true })
+			vim.keymap.set("v", "<C-m>",     "c$$<Esc>P", { buffer = true })
+			vim.keymap.set("v", "<C-s>",     "c\"\"<Esc>P", { buffer = true })
+			vim.keymap.set("v", "<C-b>", "c**<Esc>P",     { buffer = true })
+			vim.keymap.set("v", "<C-i>", "c__<Esc>P",     { buffer = true })
+			vim.keymap.set("n", "]]", "/^=\\+<CR>", { buffer = true })
+			vim.keymap.set("n", "[[", "/^=\\+<CR>", { buffer = true })
 		end)
 	end,
 })
@@ -404,10 +454,10 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 
-vim.cmd("colorscheme quiet")
+-- vim.cmd("colorscheme gruber-darker")
 -- vim.cmd("colorscheme retrobox")
 -- vim.cmd("colorscheme ef-autumn")
--- vim.cmd("colorscheme ef-rosa")
+vim.cmd("colorscheme ef-rosa")
 -- vim.cmd("colorscheme ef-cherie")
 -- vim.cmd("colorscheme ef-summer")
 -- vim.cmd("colorscheme ef-dream")
@@ -430,11 +480,12 @@ vim.keymap.set({ "n", "x" },      "<leader>l",     function() require("multiple-
 
 
 if vim.g.neovide then
-	vim.o.guifont                                = "Cascadia Mono"
-	vim.g.neovide_scale_factor                   = 1.0
-	vim.g.neovide_cursor_trail_size              = 2.0
-	vim.g.neovide_cursor_antialiasing            = true
-	vim.g.neovide_cursor_unfocused_outline_width = 0.2
+	vim.o.guifont									= "Cascadia Mono"
+	vim.o.guifont									= "IBM Plex Mono"
+	vim.g.neovide_scale_factor						= 1.0
+	vim.g.neovide_cursor_trail_size					= 2.0
+	vim.g.neovide_cursor_antialiasing				= true
+	vim.g.neovide_cursor_unfocused_outline_width	= 0.2
 	local change_scale = function(delta)
 		vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + delta
 	end
